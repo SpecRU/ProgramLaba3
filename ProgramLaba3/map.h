@@ -4,150 +4,147 @@
 
 template <class T>
 class Iteratorclass;
-template <class L, class R>
-class Map{
+template <class K, class V>
+class Map {
 private:
-    std::vector<L> key;
-    std::vector<R> value;
+    std::vector<K> key;
+    std::vector<V> value;
 
     template<class T>
-    size_t findind(const std::vector<T>& vec,const T& el) const noexcept;
+    size_t findind(const std::vector<T>& vec,const T& A) const noexcept;
 public:
     Map() noexcept;
-    Map(const Map& obj) noexcept;
-    Map(Map&& obj) noexcept;
+    Map(const Map& item) noexcept;
+    Map(Map&& item) noexcept;
     ~Map() noexcept;
-    const R& at(const L& key) const;
-    void add(const L& key, const R& value);
-    std::list<L> keys() noexcept;
+    const V& at(const K& key) const;
+    void push(const K& key, const V& value);
+    std::list<K> keys() noexcept;
     size_t size() const noexcept;
-    template <class Lt, class Rt>
-    friend bool operator==(Map<Lt, Rt> A, Map<Lt, Rt> B);
-    template <class Lt, class Rt>
-    friend bool operator!=(Map<Lt, Rt> A, Map<Lt, Rt> B);
-    const R& operator[](const L& key) const noexcept;
+    template <class K, class V>
+    friend bool operator==(Map<K, V> A, Map<K, V> B);
+    template <class K, class V>
+    friend bool operator!=(Map<K, V> A, Map<K, V> B);
+    const V& operator[](const K& key) const noexcept;
     void clear() noexcept;
-    void deleteEl(const L& key);
-    R& valueMap(const L& key,const R& defvalue) const noexcept;
+    void delElem(const K& key);
+    V& valueMap(const K& key,const V& defvalue) const noexcept;
     std::string toJSON() const;
 
-    friend class Iteratorclass<Map<L, R>>;
+    friend class Iteratorclass<Map<K, V>>;
 };
 
-template<class L, class R>
+template<class K, class V>
 template<typename T>
-size_t Map<L, R>::findind(const std::vector<T>& vec,const T& el) const noexcept{
+size_t Map<K, V>::findind(const std::vector<T>& vec,const T& A) const noexcept{
     for (int i = 0; i != vec.size(); i++){
-        if (vec[i] == el) return i;
+        if (vec[i] == A) return i;
     }
-    return this->size();
+    return vec.size();
 }
 
-template <class L, class R>
-Map<L, R>::Map() noexcept{
+template <class K, class V>
+Map<K, V>::Map() noexcept{
 }
 
-template <class L, class R>
-Map<L, R>::Map(const Map<L, R>& obj) noexcept{
-    key = obj.key;
-    value = obj.value;
+template <class K, class V>
+Map<K, V>::Map(const Map<K, V>& item) noexcept{
+    key = item.key;
+    value = item.value;
 }
 
-template<class L, class R>
-Map<L, R>::Map(Map<L, R> &&obj) noexcept {
-    key = obj.key;
-    value = obj.value;
+template<class K, class V>
+Map<K, V>::Map(Map<K, V> &&item) noexcept {
+    key = item.key;
+    value = item.value;
 }
 
-template <class L, class R>
-Map<L, R>::~Map() noexcept{
+template <class K, class V>
+Map<K, V>::~Map() noexcept{
     key.clear();
     value.clear();
 }
 
-template<class L, class R>
-const R& Map<L, R>::at(const L& key) const {
+template<class K, class V>
+const V& Map<K, V>::at(const K& key) const {
     auto ind = std::find(this->key.begin(), this->key.end(), key);
     if (ind == this->key.end()){
         throw -1;
     }
     return this->value[findind(this->key, key)];
 }
-template <class L, class R>
-void Map<L, R>::add(const L& key,const R& value){
+template <class K, class V>
+void Map<K, V>::push(const K& key,const V& value){
     auto ind = std::find(this->key.begin(), this->key.end(), key);
     if (ind != this->key.end()){
-        this->value[findind<L>(this->key, key)] = value;
+        this->value[findind<K>(this->key, key)] = value;
     } 
     else {
         this->value.push_back(value);
         this->key.push_back(key);
     }
 }
-template <class L, class R>
-std::list<L> Map<L, R>::keys() noexcept{
-    std::list<L> l(key.begin(), key.end());
+template <class K, class V>
+std::list<K> Map<K, V>::keys() noexcept{
+    std::list<K> l(key.begin(), key.end());
     return l;
 }
-template<class L, class R>
-size_t Map<L, R>::size() const noexcept{
+template<class K, class V>
+size_t Map<K, V>::size() const noexcept{
     return value.size();
 }
 
-template<class L, class R>
-const R& Map<L, R>::operator[](const L& key) const noexcept{
+template<class K, class V>
+const V& Map<K, V>::operator[](const K& key) const noexcept{
     return at(key);
 }
 
-template<class L, class R>
-void Map<L, R>::clear() noexcept {
+template<class K, class V>
+void Map<K, V>::clear() noexcept {
     value.clear();
     key.clear();
 }
 
-
-template<class Lt, class Rt>
-inline bool operator==(Map<Lt, Rt> A, Map<Lt, Rt> B) {
-    std::list<Lt> result;
-    std::list<Lt> Al = A.keys();
-    std::list<Lt> Bl = B.keys();
-    std::set_difference(Al.begin(), Al.end(), Bl.begin(), Bl.end(), std::inserter(result, result.end()));
+template<class K, class V>
+inline bool operator==(Map<K, V> A, Map<K, V> B) {
+    std::list<K> result;
+    std::list<K> Avec = A.keys();
+    std::list<K> Bvec = B.keys();
+    std::set_difference(Avec.begin(), Avec.end(), Bvec.begin(), Bvec.end(), std::inserter(result, result.end()));
 
     if (A.size() != B.size() || result.size() > 0)
         return false;
-    for (int i = 0; i < A.size(); i++) {
-        if (A[i] != B[i])
-            return false;
+    for (auto it : Avec) {
+        if (A[it] != B[it]) return false;
     }
     return true;
 }
 
-template<class Lt, class Rt>
-inline bool operator!=(Map<Lt, Rt> A, Map<Lt, Rt> B)
+template<class K, class V>
+inline bool operator!=(Map<K, V> A, Map<K, V> B)
 {
     return !operator==(A, B);
 }
 
-
-template<class L, class R>
-void Map<L, R>::deleteEl(const L& key){
+template<class K, class V>
+void Map<K, V>::delElem(const K& key){
     auto ind = std::find(this->key.begin(), this->key.end(), key);
     if (ind == this->key.end()) throw -1;
     else {
         int indk = findind(this->key, key);
-        this->key.erase(this->key.begin() + indk - 1);
-        this->value.erase(this->value.begin() + indk - 1);
+        this->key.erase(this->key.begin() + indk);
+        this->value.erase(this->value.begin() + indk);
     }
 }
 
-template<class L, class R>
-R& Map<L, R>::valueMap(const L& key, const R& defvalue) const noexcept {
+template<class K, class V>
+V& Map<K, V>::valueMap(const K& key, const V& defvalue) const noexcept {
     if(std::find(this->key.begin(), this->key.end(), key) != this->key.end()) return value[findind(this->key, key)];
     return defvalue;
 }
 
-template<class R, class L>
-std::string Map<R, L>::toJSON() const {
+template<class V, class K>
+std::string Map<V, K>::toJSON() const {
     std::string json = "{";
     for (int i=0; i < size(); i++){
         json += "\"";
